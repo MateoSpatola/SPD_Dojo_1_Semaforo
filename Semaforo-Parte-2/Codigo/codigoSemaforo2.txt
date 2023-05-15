@@ -1,0 +1,137 @@
+//Alumno: Mateo Spatola
+//Division: 1D
+
+//Ejercicio: Dojo Nº2 Semaforo
+//Dojo: C
+
+//Enunciado:
+/*
+1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+2- Tiene que implementar los tiempos correctos como se detallan a continuación.
+3- El verde dura 5 segundos. 
+4- El amarillo dura 3 segundos. 
+5- Rojo dura 5 segundos. 
+6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE.
+
+2 - LA SEGUNDA ENTREGA AGREGA LO SIGUIENTE EN UN NUEVO PROYECTO, 
+8-  Durante el amarillo: Tiene que sonar 1 vez por segundo en un tono SUAVE. 
+9-  Al cambiar de verde a amarillo debe titilar 3 veces el verde antes de pasar al amarillo
+10- Al cambiar de amarillo a rojo se debe titilar 3 veces el amarillo
+11- Al cambiar de rojo a Amarillo se debe titilar 3 veces el rojo
+12- Al cambiar de amarillo a verde se debe titilar 3 veces el amarillo.
+
+*/
+
+#define LED_ROJO 12
+#define LED_AMARILLO 10
+#define LED_VERDE 8
+#define BUZZER 6
+
+void setup()
+{
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_AMARILLO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
+  
+  Serial.begin(9600);
+  Serial.println("Bienvenidos!");
+}
+
+//Funciones
+void prenderLed(int led)
+{
+  switch(led)
+  {
+    case LED_ROJO:
+    	Serial.println("Prender led rojo");
+    	break;
+    case LED_AMARILLO:
+    	 Serial.println("Prender led amarillo");
+    	break;
+    case LED_VERDE:
+    	Serial.println("Prender led verde");
+    	break;
+  }
+  digitalWrite(led, HIGH);
+}
+
+void apagarLed(int led)
+{
+  switch(led)
+  {
+    case LED_ROJO:
+    	Serial.println("Apagar led rojo");
+    	break;
+    case LED_AMARILLO:
+    	 Serial.println("Apagar led amarillo");
+    	break;
+    case LED_VERDE:
+    	Serial.println("Apagar led verde");
+    	break;
+  }
+  digitalWrite(led, LOW);
+}
+
+void prenderUnTiempo(int led, int tiempo)
+{
+  prenderLed(led);
+  delay(tiempo);
+  apagarLed(led);
+}
+
+void titilarLed(int led, int intervalo, int cantidad)
+{
+  for(int i = 0; i < cantidad; i++)
+  {
+    Serial.println("Titilar led");
+    delay(intervalo);
+    prenderUnTiempo(led, intervalo);
+  }
+}
+
+void iterarSonido(int bocina, int frecuencia, int intervalo, int cantidad)
+{
+  for(int i = 0; i < cantidad; i++)
+  {
+    Serial.println("Suena el timbre");
+    tone(bocina,frecuencia);
+    delay(intervalo);
+    noTone(bocina);
+    delay(intervalo);
+  }
+}
+
+void prenderLedConSonido(int led)
+{
+  prenderLed(led);
+  switch(led)
+  {
+    case LED_ROJO:
+    	iterarSonido(BUZZER,500,250,10);
+    	break;
+    case LED_AMARILLO:
+    	 iterarSonido(BUZZER,500,500,3);
+    	break;
+  }
+  apagarLed(led);
+}
+
+
+//Loop
+void loop()
+{
+ prenderLedConSonido(LED_ROJO);
+ titilarLed(LED_ROJO,200,3);
+ 
+ prenderLedConSonido(LED_AMARILLO);
+ titilarLed(LED_AMARILLO,200,3);
+  
+ prenderUnTiempo(LED_VERDE,5000);
+ titilarLed(LED_VERDE,200,3);
+  
+ prenderLedConSonido(LED_AMARILLO);
+ titilarLed(LED_AMARILLO,200,3);
+}
+

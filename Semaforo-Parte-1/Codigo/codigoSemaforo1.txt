@@ -1,0 +1,80 @@
+//Alumno: Mateo Spatola
+//Division: 1D
+
+//Ejercicio: Dojo Nº1 Semaforo
+//Dojo: C
+
+//Enunciado:
+/*
+1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+2- Tiene que implementar los tiempos correctos como se detallan a continuación.
+3- El verde dura 5 segundos. 
+4- El amarillo dura 3 segundos. 
+5- Rojo dura 5 segundos. 
+6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE. 
+*/
+
+#define LED_ROJO 12
+#define LED_AMARILLO 8
+#define LED_VERDE 4
+#define BUZZER 2
+
+void setup()
+{
+  pinMode(LED_ROJO, OUTPUT);
+  pinMode(LED_AMARILLO, OUTPUT);
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
+  
+  Serial.begin(9600);
+  Serial.println("Bienvenidos!");
+}
+
+//Funciones
+void prenderUnTiempo(int led, int tiempo)
+{
+  digitalWrite(led, HIGH);
+  delay(tiempo);
+  digitalWrite(led, LOW);
+}
+
+void iterarSonido(int bocina,int frecuencia, int tiempoSonando, int tiempoApagado)
+{
+  Serial.println("Suena el timbre");
+  tone(bocina,frecuencia,tiempoSonando);
+  delay(tiempoApagado);
+}
+
+void prenderUnTiempoConSonido(int led, int tiempo)
+{
+  int segundos = 0;
+  digitalWrite(led, HIGH);
+  while(segundos < tiempo)
+  {
+    iterarSonido(BUZZER,1500,200,300);
+    iterarSonido(BUZZER,1500,200,300);
+    segundos += 1000;
+  }
+ digitalWrite(led, LOW);
+}
+
+//Loop
+void loop()
+{
+ Serial.println("Prender led rojo");
+ prenderUnTiempoConSonido(LED_ROJO, 5000);
+ Serial.println("Apagar led rojo");
+  
+ Serial.println("Prender led amarillo");
+ prenderUnTiempo(LED_AMARILLO,3000);
+ Serial.println("Apagar led amarillo");
+ 
+ Serial.println("Prender led verde");
+ prenderUnTiempo(LED_VERDE,5000);
+ Serial.println("Apagar led verde");
+  
+ Serial.println("Prender led amarillo");
+ prenderUnTiempo(LED_AMARILLO,3000);
+ Serial.println("Apagar led amarillo");
+}

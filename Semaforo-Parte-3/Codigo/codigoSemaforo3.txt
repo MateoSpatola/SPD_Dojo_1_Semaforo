@@ -1,0 +1,252 @@
+//Alumno: Mateo Spatola
+//Division: 1D
+
+//Ejercicio: Dojo Nº3 Semaforo
+//Dojo: C
+
+//Enunciado:
+/*
+1- El semáforo tiene que tener 2 leds de cada color como mínimo, en caso de que uno se  rompa. 
+2- Tiene que implementar los tiempos correctos como se detallan a continuación.
+3- El verde dura 5 segundos. 
+4- El amarillo dura 3 segundos. 
+5- Rojo dura 5 segundos. 
+6- Tiene que tener señalización para personas no videntes como se detalla a  continuación. (Buzzer o piezo)
+7- Durante el rojo: Tiene que sonar 2 vez por segundo en un tono FUERTE.
+
+2 - LA SEGUNDA ENTREGA AGREGA LO SIGUIENTE EN UN NUEVO PROYECTO, 
+8-  Durante el amarillo: Tiene que sonar 1 vez por segundo en un tono SUAVE. 
+9-  Al cambiar de verde a amarillo debe titilar 3 veces el verde antes de pasar al amarillo
+10- Al cambiar de amarillo a rojo se debe titilar 3 veces el amarillo
+11- Al cambiar de rojo a Amarillo se debe titilar 3 veces el rojo
+12- Al cambiar de amarillo a verde se debe titilar 3 veces el amarillo.
+
+3 - LA TERCER ENTREGA AGREGA LO SIGUIENTE EN UN NUEVO PROYECTO, 
+13- Agregar un botón (pull down) que al presionarlo se active la funcionalidad de luz verde con más tiempo, 
+	dándole a la persona que lo necesite más tiempo para cruzar la calle, sirve para la próxima luz verde 
+    y solo para la próxima luz verde después de presionar el botón. el tiempo se duplicará. 
+14- Colocar dos semáforos de calles que se crucen  y programarlos para que funcionen en conjunto.
+*/
+
+#define LED_ROJO_UNO 5
+#define LED_AMARILLO_UNO 4
+#define LED_VERDE_UNO 3
+#define BUZZER 2
+#define BOTON 7
+#define LED_ROJO_DOS 9
+#define LED_AMARILLO_DOS 10
+#define LED_VERDE_DOS 11
+
+void setup()
+{
+  //Salida digital
+  pinMode(LED_ROJO_UNO, OUTPUT);
+  pinMode(LED_AMARILLO_UNO, OUTPUT);
+  pinMode(LED_VERDE_UNO, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
+  pinMode(LED_ROJO_DOS, OUTPUT);
+  pinMode(LED_AMARILLO_DOS, OUTPUT);
+  pinMode(LED_VERDE_DOS, OUTPUT);
+  
+  //Entrada digital
+  pinMode(BOTON, INPUT);
+  
+  //Inicio del puerto serie
+  Serial.begin(9600);
+  Serial.println("Bienvenidos!");
+}
+
+//Loop
+void loop()
+{
+  if(digitalRead(BOTON) == 0)
+  {
+    loopSemaforoUno();
+  }
+  if(digitalRead(BOTON) == 1)
+  {
+    //Si el boton se encuentra pulsado, el siguiente 
+    //semaforo arrancara con el tiempo de luz vede duplicado
+    loopSemaforoDosConTiempoVerdeDuplicado();
+  }
+  
+  if(digitalRead(BOTON) == 0)
+  {
+    loopSemaforoDos();
+  }
+  if(digitalRead(BOTON) == 1)
+  {
+    //Si el boton se encuentra pulsado, el siguiente 
+    //semaforo arrancara con el tiempo de luz vede duplicado
+    loopSemaforoUnoConTiempoVerdeDuplicado();
+  }
+}
+
+
+//Funciones
+void prenderLed(int led)
+{
+  switch(led)
+  {
+    case LED_ROJO_UNO:
+    	Serial.println("Prender led rojo UNO");
+    	break;
+    case LED_AMARILLO_UNO:
+    	 Serial.println("Prender led amarillo UNO");
+    	break;
+    case LED_VERDE_UNO:
+    	Serial.println("Prender led verde UNO");
+    	break;
+    
+    case LED_ROJO_DOS:
+    	Serial.println("Prender led rojo DOS");
+    	break;
+    case LED_AMARILLO_DOS:
+    	 Serial.println("Prender led amarillo DOS");
+    	break;
+    case LED_VERDE_DOS:
+    	Serial.println("Prender led verde DOS");
+    	break;
+  }
+  digitalWrite(led, HIGH);
+}
+
+void apagarLed(int led)
+{
+  switch(led)
+  {
+    case LED_ROJO_UNO:
+    	Serial.println("Apagar led rojo UNO");
+    	break;
+    case LED_AMARILLO_UNO:
+    	 Serial.println("Apagar led amarillo UNO");
+    	break;
+    case LED_VERDE_UNO:
+    	Serial.println("Apagar led verde UNO");
+    	break;
+    
+    case LED_ROJO_DOS:
+    	Serial.println("Apagar led rojo DOS");
+    	break;
+    case LED_AMARILLO_DOS:
+    	 Serial.println("Apagar led amarillo DOS");
+    	break;
+    case LED_VERDE_DOS:
+    	Serial.println("Apagar led verde DOS");
+    	break;
+  }
+  digitalWrite(led, LOW);
+}
+
+void prenderUnTiempo(int led, int tiempo)
+{
+  prenderLed(led);
+  delay(tiempo);
+  apagarLed(led);
+}
+
+void titilarLed(int led, int intervalo, int cantidad)
+{
+  for(int i = 0; i < cantidad; i++)
+  {
+    Serial.println("Titilar led");
+    delay(intervalo);
+    prenderUnTiempo(led, intervalo);
+  }
+}
+
+void iterarSonido(int bocina, int frecuencia, int intervalo, int cantidad)
+{
+  for(int i = 0; i < cantidad; i++)
+  {
+    Serial.println("Suena el timbre");
+    tone(bocina,frecuencia);
+    delay(intervalo);
+    noTone(bocina);
+    delay(intervalo);
+  }
+}
+
+void prenderLedConSonido(int led)
+{
+  prenderLed(led);
+  switch(led)
+  {
+    case LED_ROJO_UNO:
+    case LED_ROJO_DOS:
+    	iterarSonido(BUZZER,1500,250,10);
+    	break;
+    case LED_AMARILLO_UNO:
+    case LED_AMARILLO_DOS:
+    	 iterarSonido(BUZZER,500,500,3);
+    	break;
+  }
+}
+
+void loopSemaforoUno()
+{
+  prenderLed(LED_ROJO_DOS);
+  prenderLedConSonido(LED_ROJO_UNO);
+  titilarLed(LED_ROJO_UNO,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_UNO);
+  titilarLed(LED_AMARILLO_UNO,200,3);
+  
+  prenderUnTiempo(LED_VERDE_UNO,5000);
+  titilarLed(LED_VERDE_UNO,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_UNO);
+  titilarLed(LED_AMARILLO_UNO,200,3);
+  apagarLed(LED_ROJO_DOS);
+}
+
+void loopSemaforoUnoConTiempoVerdeDuplicado()
+{
+  prenderLed(LED_ROJO_DOS);
+  prenderLedConSonido(LED_ROJO_UNO);
+  titilarLed(LED_ROJO_UNO,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_UNO);
+  titilarLed(LED_AMARILLO_UNO,200,3);
+  
+  prenderUnTiempo(LED_VERDE_UNO,10000);
+  titilarLed(LED_VERDE_UNO,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_UNO);
+  titilarLed(LED_AMARILLO_UNO,200,3);
+  apagarLed(LED_ROJO_DOS);
+}
+
+void loopSemaforoDos()
+{
+  prenderLed(LED_ROJO_UNO);
+  prenderLedConSonido(LED_ROJO_DOS);
+  titilarLed(LED_ROJO_DOS,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_DOS);
+  titilarLed(LED_AMARILLO_DOS,200,3);
+  
+  prenderUnTiempo(LED_VERDE_DOS,5000);
+  titilarLed(LED_VERDE_DOS,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_DOS);
+  titilarLed(LED_AMARILLO_DOS,200,3);
+}
+
+void loopSemaforoDosConTiempoVerdeDuplicado()
+{
+  prenderLed(LED_ROJO_UNO);
+  prenderLedConSonido(LED_ROJO_DOS);
+  titilarLed(LED_ROJO_DOS,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_DOS);
+  titilarLed(LED_AMARILLO_DOS,200,3);
+  
+  prenderUnTiempo(LED_VERDE_DOS,10000);
+  titilarLed(LED_VERDE_DOS,200,3);
+  
+  prenderLedConSonido(LED_AMARILLO_DOS);
+  titilarLed(LED_AMARILLO_DOS,200,3);
+}
+
+
